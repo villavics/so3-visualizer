@@ -8,6 +8,7 @@ export interface ControlState {
   speed: number;
   mode: AnimationMode;
   showAntipodalGrid: boolean;
+  showPositionVector: boolean;
 }
 
 type ChangeCallback = (state: ControlState) => void;
@@ -41,6 +42,7 @@ export class ControlPanel {
   private speed = 0.3;
   private mode: AnimationMode = 'loop';
   private showAntipodalGrid = true;
+  private showPositionVector = false;
 
   // DOM refs
   private progressSlider!: HTMLInputElement;
@@ -81,6 +83,7 @@ export class ControlPanel {
       speed: this.speed,
       mode: this.mode,
       showAntipodalGrid: this.showAntipodalGrid,
+      showPositionVector: this.showPositionVector,
     };
   }
 
@@ -219,6 +222,10 @@ export class ControlPanel {
         <h3>Opciones de visualización</h3>
         <label class="checkbox-label">
           <input type="checkbox" id="show-antipodal" checked> Marcadores antipodales
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-position-vector"> Vector de posición
+          <span class="option-hint">Muestra el vector desde el origen al punto actual</span>
         </label>
       </div>
     `;
@@ -449,6 +456,13 @@ export class ControlPanel {
     const antipodalToggle = this.container.querySelector('#show-antipodal') as HTMLInputElement;
     antipodalToggle.addEventListener('change', () => {
       this.showAntipodalGrid = antipodalToggle.checked;
+      this.emitChange();
+    });
+
+    // Position vector toggle
+    const vectorToggle = this.container.querySelector('#show-position-vector') as HTMLInputElement;
+    vectorToggle.addEventListener('change', () => {
+      this.showPositionVector = vectorToggle.checked;
       this.emitChange();
     });
   }

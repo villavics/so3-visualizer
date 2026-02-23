@@ -7,12 +7,24 @@ export interface TrajectoryStyle {
   lineWidth?: number; // note: WebGL limits this to 1 on most hardware
 }
 
+/** Thick arrow built from CylinderGeometry (shaft) + ConeGeometry (head). */
+interface ThickArrow {
+  group: THREE.Group;
+  shaft: THREE.Mesh;
+  head: THREE.Mesh;
+}
+
 interface ActiveTrajectory {
   line: THREE.Line;
   headSphere: THREE.Mesh;
+  arrow: ThickArrow | null;
   points: Vec3[];
   progress: number;
 }
+
+// Reusable helpers to avoid per-frame allocations
+const _up = new THREE.Vector3(0, 1, 0);
+const _dir = new THREE.Vector3();
 
 /**
  * Renders animated trajectory paths inside the SO(3) ball.
@@ -22,14 +34,81 @@ interface ActiveTrajectory {
 export class TrajectoryRenderer {
   group: THREE.Group;
   private trajectories = new Map<string, ActiveTrajectory>();
+  private _showPositionVector = false;
 
   // For the antipodal jump visualization
   private jumpLine: THREE.Line | null = null;
   private jumpFlash: THREE.Mesh | null = null;
   private jumpFlashTimer = 0;
 
+  // Thick arrow styling constants
+  private static readonly SHAFT_RADIUS = 0.025;
+  private static readonly HEAD_RADIUS = 0.065;
+  private static readonly HEAD_LENGTH = 0.16;
+  private static readonly MIN_ARROW_LENGTH = 0.08;
+
   constructor() {
     this.group = new THREE.Group();
+  }
+
+  /** Toggle position vector (arrow from origin to current point). */
+  set showPositionVector(show: boolean) {
+    this._showPositionVector = show;
+    // Update visibility of all existing arrows
+    for (const traj of this.trajectories.values()) {
+      if (traj.arrow) {
+        traj.arrow.group.visible = show;
+      }
+    }
+  }
+
+  get showPositionVector(): boolean {
+    return this._showPositionVector;
+  }
+
+  /**
+   * Create a thick arrow (cylinder shaft + cone head) oriented along +Y.
+   * The group is rotated in setProgress() to point toward the current position.
+   */
+  private createThickArrow(color: number): ThickArrow {
+    const group = new THREE.Group();
+
+    // Shaft: unit-height cylinder along Y, bottom at origin
+    const shaftGeo = new THREE.CylinderGeometry(
+      TrajectoryRenderer.SHAFT_RADIUS,
+      TrajectoryRenderer.SHAFT_RADIUS,
+      1, 8,
+    );
+    shaftGeo.translate(0, 0.5, 0); // pivot at origin, extends to y=1
+    const shaftMat = new THREE.MeshPhongMaterial({
+      color,
+      emissive: color,
+      emissiveIntensity: 0.3,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const shaft = new THREE.Mesh(shaftGeo, shaftMat);
+    group.add(shaft);
+
+    // Head: cone along Y, centered at origin (repositioned dynamically)
+    const headGeo = new THREE.ConeGeometry(
+      TrajectoryRenderer.HEAD_RADIUS,
+      TrajectoryRenderer.HEAD_LENGTH,
+      12,
+    );
+    headGeo.translate(0, TrajectoryRenderer.HEAD_LENGTH / 2, 0);
+    const headMat = new THREE.MeshPhongMaterial({
+      color,
+      emissive: color,
+      emissiveIntensity: 0.3,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const head = new THREE.Mesh(headGeo, headMat);
+    group.add(head);
+
+    group.visible = false;
+    return { group, shaft, head };
   }
 
   /**
@@ -58,12 +137,16 @@ export class TrajectoryRenderer {
     headSphere.visible = false;
     this.group.add(headSphere);
 
-    this.trajectories.set(id, { line, headSphere, points, progress: 0 });
+    // Position vector: thick arrow (origin -> current point)
+    const arrow = this.createThickArrow(style.color);
+    this.group.add(arrow.group);
+
+    this.trajectories.set(id, { line, headSphere, arrow, points, progress: 0 });
   }
 
   /**
    * Update how much of the trajectory is visible and move the head.
-   * t ∈ [0, 1] — fraction of path completed.
+   * t in [0, 1] -- fraction of path completed.
    */
   setProgress(id: string, t: number): void {
     const traj = this.trajectories.get(id);
@@ -84,6 +167,29 @@ export class TrajectoryRenderer {
       const p = traj.points[idx];
       traj.headSphere.position.set(p.x, p.y, p.z);
       traj.headSphere.visible = true;
+
+      // Update thick position vector arrow
+      if (traj.arrow) {
+        const len = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+        if (len > TrajectoryRenderer.MIN_ARROW_LENGTH && this._showPositionVector) {
+          _dir.set(p.x / len, p.y / len, p.z / len);
+
+          const headLen = TrajectoryRenderer.HEAD_LENGTH;
+          const shaftLen = Math.max(0.01, len - headLen);
+
+          // Scale shaft to correct length
+          traj.arrow.shaft.scale.y = shaftLen;
+
+          // Position cone head at the top of the shaft
+          traj.arrow.head.position.y = shaftLen;
+
+          // Orient the whole group to point from origin toward p
+          traj.arrow.group.quaternion.setFromUnitVectors(_up, _dir);
+          traj.arrow.group.visible = true;
+        } else {
+          traj.arrow.group.visible = false;
+        }
+      }
     }
   }
 
@@ -161,6 +267,16 @@ export class TrajectoryRenderer {
     (traj.line.material as THREE.Material).dispose();
     traj.headSphere.geometry.dispose();
     (traj.headSphere.material as THREE.Material).dispose();
+
+    // Dispose thick arrow
+    if (traj.arrow) {
+      this.group.remove(traj.arrow.group);
+      traj.arrow.shaft.geometry.dispose();
+      (traj.arrow.shaft.material as THREE.Material).dispose();
+      traj.arrow.head.geometry.dispose();
+      (traj.arrow.head.material as THREE.Material).dispose();
+    }
+
     this.trajectories.delete(id);
   }
 

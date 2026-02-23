@@ -261,6 +261,10 @@ function init() {
       antipodalMarkers.clear();
     }
 
+    // Show/hide position vector (main scene + comparison scenes)
+    trajectoryRenderer.showPositionVector = state.showPositionVector;
+    comparison.setShowPositionVector(state.showPositionVector);
+
     animController.reset();
 
     // Update AI tutor context
@@ -286,6 +290,7 @@ function init() {
       speed: preset.speed,
       mode: preset.mode,
       showAntipodalGrid: true,
+      showPositionVector: controls.getState().showPositionVector,
     });
   });
 

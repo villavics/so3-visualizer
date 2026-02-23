@@ -45,30 +45,34 @@
 
       <aside id="sidebar">
         <div id="control-panel"></div>
-        <nav class="sidebar-tabs" role="tablist" aria-label="Paneles de información">
-          <button class="sidebar-tab active" role="tab" aria-selected="true" aria-controls="tab-panel-explicacion" data-tab="explicacion">📖 Explicación</button>
-          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-tutor" data-tab="tutor">🤖 Tutor IA</button>
-          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-quiz" data-tab="quiz">📝 Quiz</button>
-          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-objetivos" data-tab="objetivos">🎯 Objetivos</button>
-          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-evidencias" data-tab="evidencias">📋 Evidencias</button>
-        </nav>
-        <div id="tab-panel-explicacion" class="tab-panel active" role="tabpanel" aria-labelledby="tab-explicacion">
-          <div id="explanation-panel"></div>
-        </div>
-        <div id="tab-panel-tutor" class="tab-panel" role="tabpanel" aria-labelledby="tab-tutor">
-          <div id="tutor-panel"></div>
-        </div>
-        <div id="tab-panel-quiz" class="tab-panel" role="tabpanel" aria-labelledby="tab-quiz">
-          <div id="quiz-panel"></div>
-        </div>
-        <div id="tab-panel-objetivos" class="tab-panel" role="tabpanel" aria-labelledby="tab-objetivos">
-          <div id="objetivos-panel"></div>
-        </div>
-        <div id="tab-panel-evidencias" class="tab-panel" role="tabpanel" aria-labelledby="tab-evidencias">
-          <div id="evidencias-panel"></div>
-        </div>
       </aside>
     </main>
+
+    <!-- Education section: full-width below visualization -->
+    <section id="education-section">
+      <nav class="sidebar-tabs" role="tablist" aria-label="Paneles de información">
+        <button class="sidebar-tab active" role="tab" aria-selected="true" aria-controls="tab-panel-explicacion" data-tab="explicacion">📖 Explicación</button>
+        <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-tutor" data-tab="tutor">🤖 Tutor IA</button>
+        <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-quiz" data-tab="quiz">📝 Quiz</button>
+        <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-objetivos" data-tab="objetivos">🎯 Objetivos</button>
+        <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-evidencias" data-tab="evidencias">📋 Evidencias</button>
+      </nav>
+      <div id="tab-panel-explicacion" class="tab-panel active" role="tabpanel" aria-labelledby="tab-explicacion">
+        <div id="explanation-panel"></div>
+      </div>
+      <div id="tab-panel-tutor" class="tab-panel" role="tabpanel" aria-labelledby="tab-tutor">
+        <div id="tutor-panel"></div>
+      </div>
+      <div id="tab-panel-quiz" class="tab-panel" role="tabpanel" aria-labelledby="tab-quiz">
+        <div id="quiz-panel"></div>
+      </div>
+      <div id="tab-panel-objetivos" class="tab-panel" role="tabpanel" aria-labelledby="tab-objetivos">
+        <div id="objetivos-panel"></div>
+      </div>
+      <div id="tab-panel-evidencias" class="tab-panel" role="tabpanel" aria-labelledby="tab-evidencias">
+        <div id="evidencias-panel"></div>
+      </div>
+    </section>
   </div>
 
   <script type="module" src="/src/main.ts"></script>

@@ -84,6 +84,16 @@ export class ComparisonMode {
     this.rightTrajectory?.setProgress('right', t);
   }
 
+  /** Propagate position vector toggle to both comparison scenes. */
+  setShowPositionVector(show: boolean): void {
+    if (this.leftTrajectory) {
+      this.leftTrajectory.showPositionVector = show;
+    }
+    if (this.rightTrajectory) {
+      this.rightTrajectory.showPositionVector = show;
+    }
+  }
+
   isActive(): boolean {
     return this.active;
   }
