@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visualizador pedagógico interactivo de la topología de SO(3), el grupo de rotaciones 3D">
+  <title>Visualizador de SO(3)</title>
+</head>
+<body>
+  <a href="#app-main" class="skip-link">Saltar al contenido principal</a>
+  <div id="app" role="application" aria-label="Visualizador de topología SO(3)">
+    <header id="app-header">
+      <div class="header-content">
+        <h1>Visualizador de SO(3)</h1>
+        <p class="subtitle">Explorando por qué una rotación de 360° no es topológicamente trivial</p>
+      </div>
+    </header>
+
+    <main id="app-main">
+      <section id="viewport-section">
+        <div id="main-viewport" role="img" aria-label="Visualización 3D de la bola SO(3) con trayectorias de lazos"></div>
+        <div id="cross-section-panel">
+          <div id="cross-section-header">
+            <span>Sección 2D (estilo Fig. 15.6)</span>
+            <div class="cross-section-buttons">
+              <button id="show-interactive-comparison-btn" class="small-btn" title="Comparar 2π vs 4π interactivamente" aria-label="Modo interactivo comparación 2π vs 4π">2π vs 4π</button>
+              <button id="show-stages-btn" class="small-btn" title="Mostrar etapas de contracción" aria-label="Ver etapas de contracción 4 pi">Etapas 4π</button>
+            </div>
+          </div>
+          <div id="cross-section-canvas"></div>
+        </div>
+      </section>
+
+      <!-- Comparison mode: side by side -->
+      <section id="comparison-section" style="display:none">
+        <div class="comparison-panel">
+          <h3 class="comparison-label comparison-label-2pi">2π — No contráctil</h3>
+          <div id="comparison-left"></div>
+        </div>
+        <div class="comparison-panel">
+          <h3 class="comparison-label comparison-label-4pi">4π — Contráctil</h3>
+          <div id="comparison-right"></div>
+        </div>
+      </section>
+
+      <aside id="sidebar">
+        <div id="control-panel"></div>
+        <nav class="sidebar-tabs" role="tablist" aria-label="Paneles de información">
+          <button class="sidebar-tab active" role="tab" aria-selected="true" aria-controls="tab-panel-explicacion" data-tab="explicacion">📖 Explicación</button>
+          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-tutor" data-tab="tutor">🤖 Tutor IA</button>
+          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-quiz" data-tab="quiz">📝 Quiz</button>
+          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-objetivos" data-tab="objetivos">🎯 Objetivos</button>
+          <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="tab-panel-evidencias" data-tab="evidencias">📋 Evidencias</button>
+        </nav>
+        <div id="tab-panel-explicacion" class="tab-panel active" role="tabpanel" aria-labelledby="tab-explicacion">
+          <div id="explanation-panel"></div>
+        </div>
+        <div id="tab-panel-tutor" class="tab-panel" role="tabpanel" aria-labelledby="tab-tutor">
+          <div id="tutor-panel"></div>
+        </div>
+        <div id="tab-panel-quiz" class="tab-panel" role="tabpanel" aria-labelledby="tab-quiz">
+          <div id="quiz-panel"></div>
+        </div>
+        <div id="tab-panel-objetivos" class="tab-panel" role="tabpanel" aria-labelledby="tab-objetivos">
+          <div id="objetivos-panel"></div>
+        </div>
+        <div id="tab-panel-evidencias" class="tab-panel" role="tabpanel" aria-labelledby="tab-evidencias">
+          <div id="evidencias-panel"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
