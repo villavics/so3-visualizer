@@ -346,7 +346,6 @@ function init() {
   animController.onContractionChange = (s) => {
     controls.setContractionParam(s);
     crossSection.setContractionParam(s);
-    aiTutor.setContext({ contractionParam: s });
     // Track contraction completion
     if (s >= 0.99) {
       session.contractionCompleted = true;

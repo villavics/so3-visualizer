@@ -41,7 +41,8 @@ export class AITutor {
   private context: VisualizationContext = {
     mode: 'loop', totalAngle: 2 * Math.PI, contractionParam: 0, is4pi: false,
   };
-  private lastContextMessage = '';
+  private shownModeMessages = new Set<string>();
+  private lastAngleMessage = '';
   private knowledgeBase: KBEntry[] = [];
 
   constructor(container: HTMLElement) {
@@ -152,8 +153,8 @@ export class AITutor {
         'Abajo, los intentos fallidos de contraer el lazo 2π.',
     };
     const msg = messages[mode];
-    if (msg && msg !== this.lastContextMessage) {
-      this.lastContextMessage = msg;
+    if (msg && !this.shownModeMessages.has(mode)) {
+      this.shownModeMessages.add(mode);
       this.addMessage('tutor', msg);
     }
   }
@@ -161,12 +162,17 @@ export class AITutor {
   private onAngleChange(): void {
     const a = this.context.totalAngle;
     const piMultiple = a / Math.PI;
+    let msg: string;
     if (Math.abs(piMultiple - 2) < 0.1) {
-      this.addMessage('system', '🔔 Ángulo cambiado a 2π (360°) — lazo no contráctil');
+      msg = '🔔 Ángulo cambiado a 2π (360°) — lazo no contráctil';
     } else if (Math.abs(piMultiple - 4) < 0.1) {
-      this.addMessage('system', '🔔 Ángulo cambiado a 4π (720°) — lazo contráctil');
+      msg = '🔔 Ángulo cambiado a 4π (720°) — lazo contráctil';
     } else {
-      this.addMessage('system', `🔔 Ángulo: ${piMultiple.toFixed(1)}π (${(piMultiple * 180).toFixed(0)}°)`);
+      msg = `🔔 Ángulo: ${piMultiple.toFixed(1)}π (${(piMultiple * 180).toFixed(0)}°)`;
+    }
+    if (msg !== this.lastAngleMessage) {
+      this.lastAngleMessage = msg;
+      this.addMessage('system', msg);
     }
   }
 
